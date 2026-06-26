@@ -21,7 +21,7 @@ interface Props {
   location?: Location;
 }
 
-export function AddLocationForm({ journeyId, onClose, location }: Props) {
+export function LocationForm({ journeyId, onClose, location }: Props) {
   const isEdit = !!location;
   const { pendingCoords, setPendingCoords } = useMapStore();
   const { mutate: addLocation, isPending: isAdding } = useAddLocation(journeyId ?? '');

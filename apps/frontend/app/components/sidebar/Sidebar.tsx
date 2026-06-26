@@ -4,9 +4,9 @@ import { useMapStore } from '~/store/map.store';
 import { useJourneys, useJourney } from '~/hooks/useJourneys';
 import { JourneyList } from './JourneyList';
 import { LocationList } from './LocationList';
-import { AddJourneyForm } from '../forms/AddJourneyForm';
-import { AddLocationForm } from '../forms/AddLocationForm';
-import { AddRouteForm } from '../forms/AddRouteForm';
+import { JourneyForm } from '../forms/JourneyForm';
+import { LocationForm } from '../forms/LocationForm';
+import { RouteForm } from '../forms/RouteForm';
 import { useRouter } from '@tanstack/react-router';
 import type { Journey, Location } from '@journey-map/types';
 
@@ -117,22 +117,22 @@ export function Sidebar() {
       </div>
 
       {/* Modals */}
-      {modal === 'add-journey' && <AddJourneyForm onClose={() => setModal(null)} />}
+      {modal === 'add-journey' && <JourneyForm onClose={() => setModal(null)} />}
       {editingJourney && (
-        <AddJourneyForm journey={editingJourney} onClose={() => setEditingJourney(null)} />
+        <JourneyForm journey={editingJourney} onClose={() => setEditingJourney(null)} />
       )}
       {modal === 'add-route' && selectedJourney && (
-        <AddRouteForm
+        <RouteForm
           journeyId={selectedJourney.id}
           locations={selectedJourney.locations}
           onClose={() => setModal(null)}
         />
       )}
       {/* Create location: triggered by map click coords */}
-      <AddLocationForm journeyId={selectedJourneyId} onClose={() => {}} />
+      <LocationForm journeyId={selectedJourneyId} onClose={() => {}} />
       {/* Edit location: triggered from LocationList or LocationPopup */}
       {locationToEdit && selectedJourney && (
-        <AddLocationForm
+        <LocationForm
           key={locationToEdit.id}
           journeyId={selectedJourney.id}
           location={locationToEdit}

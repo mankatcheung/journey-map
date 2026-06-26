@@ -21,7 +21,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function AddRouteForm({ journeyId, locations, onClose }: Props) {
+export function RouteForm({ journeyId, locations, onClose }: Props) {
   const { mutate: addRoute, isPending } = useAddRoute(journeyId);
   const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),

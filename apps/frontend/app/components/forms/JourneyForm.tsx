@@ -23,7 +23,7 @@ interface Props {
   journey?: Journey;
 }
 
-export function AddJourneyForm({ onClose, journey }: Props) {
+export function JourneyForm({ onClose, journey }: Props) {
   const isEdit = !!journey;
   const { mutate: createJourney, isPending: isCreating } = useCreateJourney();
   const { mutate: updateJourney, isPending: isUpdating } = useUpdateJourney(journey?.id ?? '');
