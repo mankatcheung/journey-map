@@ -1,0 +1,30 @@
+{
+  "name": "@journey-map/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "start": "bun run dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "bunx prisma migrate dev",
+    "db:generate": "bunx prisma generate",
+    "db:studio": "bunx prisma studio"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.3.3",
+    "@journey-map/types": "workspace:*",
+    "@libsql/client": "^0.14.0",
+    "@prisma/adapter-libsql": "^6.9.0",
+    "@prisma/client": "^6.9.0",
+    "elysia": "^1.3.4",
+    "jose": "^5.10.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prisma": "^6.9.0",
+    "typescript": "^5.8.3"
+  }
+}

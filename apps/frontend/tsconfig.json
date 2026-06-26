@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@journey-map/types": ["../../packages/types/src/index.ts"],
+      "~/*": ["./app/*"]
+    }
+  },
+  "include": ["app/**/*", "app.config.ts"],
+  "exclude": ["node_modules", ".vinxi", "dist"]
+}

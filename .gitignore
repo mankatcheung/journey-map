@@ -1,0 +1,12 @@
+node_modules
+.turbo
+dist
+.env
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+apps/backend/src/generated
+apps/frontend/.output
+apps/frontend/app/routeTree.gen.ts
+apps/frontend/app.config.timestamp_*.js

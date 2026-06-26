@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime  @default(now())
+
+  journeys Journey[]
+
+  @@index([email])
+}
+
+model Journey {
+  id          String    @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locations Location[]
+  routes    Route[]
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  journeyId String
+  name      String
+  latitude  Float
+  longitude Float
+  address   String?
+  date      DateTime
+  notes     String?
+  order     Int
+  createdAt DateTime @default(now())
+
+  journey    Journey @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  routesFrom Route[] @relation("RouteFromLocation")
+  routesTo   Route[] @relation("RouteToLocation")
+
+  @@index([journeyId])
+  @@index([journeyId, order])
+}
+
+model Route {
+  id             String   @id @default(uuid())
+  journeyId      String
+  fromLocationId String
+  toLocationId   String
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  journey      Journey  @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  fromLocation Location @relation("RouteFromLocation", fields: [fromLocationId], references: [id], onDelete: Cascade)
+  toLocation   Location @relation("RouteToLocation", fields: [toLocationId], references: [id], onDelete: Cascade)
+
+  @@unique([fromLocationId, toLocationId])
+  @@index([journeyId])
+}
