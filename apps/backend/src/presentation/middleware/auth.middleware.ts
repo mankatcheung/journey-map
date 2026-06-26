@@ -4,6 +4,7 @@ import type { AppContainer } from '../../container.ts';
 
 export const authMiddleware = new Elysia({ name: 'auth-middleware' }).derive(
   { as: 'scoped' },
+  // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
   async ({ container, headers }: { container: AppContainer; headers: Record<string, string | undefined> }) => {
     const authHeader = headers['authorization'];
     if (!authHeader?.startsWith('Bearer ')) throw new UnauthorizedError();

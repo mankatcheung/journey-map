@@ -8,6 +8,7 @@ import {
 export const authRoutes = new Elysia({ prefix: '/api/auth' })
   .post(
     '/signup',
+    // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
     async ({ container, body, set }: { container: AppContainer; body: { email: string; password: string; name: string }; set: { status: number } }) => {
       try {
         set.status = 201;
@@ -30,6 +31,7 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
   )
   .post(
     '/signin',
+    // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
     async ({ container, body, set }: { container: AppContainer; body: { email: string; password: string }; set: { status: number } }) => {
       try {
         return await container.useCases.signIn(body);

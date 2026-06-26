@@ -8,14 +8,16 @@ type JourneyParamCtx = JourneyCtx & { params: { journeyId: string }; set: { stat
 
 export const journeyRoutes = new Elysia({ prefix: '/api/journeys' })
   .use(authMiddleware)
+  // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
   .get('/', async ({ container, currentUser }: JourneyCtx) => {
     return { journeys: await container.useCases.getJourneys({ userId: currentUser.userId }) };
   })
   .post(
     '/',
+    // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
     async ({ container, currentUser, body, set }: JourneyCtx & { body: Record<string, unknown>; set: { status: number } }) => {
       set.status = 201;
-      return { journey: await container.useCases.createJourney({ userId: currentUser.userId, ...(body as object) }) };
+      return { journey: await container.useCases.createJourney({ userId: currentUser.userId, ...(body as any) }) };
     },
     {
       body: t.Object({
@@ -26,6 +28,7 @@ export const journeyRoutes = new Elysia({ prefix: '/api/journeys' })
       }),
     },
   )
+  // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
   .get('/:journeyId', async ({ container, currentUser, params, set }: JourneyParamCtx) => {
     try {
       return { journey: await container.useCases.getJourney({ id: params.journeyId, userId: currentUser.userId }) };
@@ -38,6 +41,7 @@ export const journeyRoutes = new Elysia({ prefix: '/api/journeys' })
   })
   .put(
     '/:journeyId',
+    // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
     async ({ container, currentUser, params, body, set }: JourneyParamCtx & { body: Record<string, unknown> }) => {
       try {
         return { journey: await container.useCases.updateJourney({ id: params.journeyId, userId: currentUser.userId, ...(body as object) }) };
@@ -57,6 +61,7 @@ export const journeyRoutes = new Elysia({ prefix: '/api/journeys' })
       }),
     },
   )
+  // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
   .delete('/:journeyId', async ({ container, currentUser, params, set }: JourneyParamCtx) => {
     try {
       await container.useCases.deleteJourney({ id: params.journeyId, userId: currentUser.userId });

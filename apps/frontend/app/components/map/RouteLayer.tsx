@@ -1,4 +1,5 @@
 import { Source, Layer } from 'react-map-gl/maplibre';
+import type { Feature, LineString } from 'geojson';
 import type { Route, Location } from '@journey-map/types';
 
 interface Props {
@@ -11,7 +12,7 @@ export function RouteLayer({ route, locations }: Props) {
   const to = locations.find((l) => l.id === route.toLocationId);
   if (!from || !to) return null;
 
-  const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
+  const geojson: Feature<LineString> = {
     type: 'Feature',
     properties: { notes: route.notes },
     geometry: {

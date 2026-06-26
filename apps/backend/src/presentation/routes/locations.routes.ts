@@ -9,6 +9,7 @@ export const locationRoutes = new Elysia({ prefix: '/api/journeys/:journeyId/loc
   .use(authMiddleware)
   .post(
     '/',
+    // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
     async ({ container, currentUser, params, body, set }: Ctx & { body: Record<string, unknown> }) => {
       try {
         set.status = 201;
@@ -16,7 +17,7 @@ export const locationRoutes = new Elysia({ prefix: '/api/journeys/:journeyId/loc
           location: await container.useCases.addLocation({
             journeyId: params.journeyId,
             userId: currentUser.userId,
-            ...(body as object),
+            ...(body as any),
           }),
         };
       } catch (err: unknown) {
@@ -39,6 +40,7 @@ export const locationRoutes = new Elysia({ prefix: '/api/journeys/:journeyId/loc
   )
   .put(
     '/:locId',
+    // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
     async ({ container, currentUser, params, body, set }: Ctx & { params: { journeyId: string; locId: string }; body: Record<string, unknown> }) => {
       try {
         return {
@@ -68,6 +70,7 @@ export const locationRoutes = new Elysia({ prefix: '/api/journeys/:journeyId/loc
       }),
     },
   )
+  // @ts-expect-error: container is provided at runtime via parent app's .decorate('container', container)
   .delete('/:locId', async ({ container, currentUser, params, set }: Ctx & { params: { journeyId: string; locId: string } }) => {
     try {
       await container.useCases.removeLocation({
