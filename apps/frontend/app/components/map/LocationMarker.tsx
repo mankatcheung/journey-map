@@ -6,9 +6,13 @@ import type { Location } from '@journey-map/types';
 interface Props {
   location: Location;
   journeyId: string;
+  isUnconnected: boolean;
+  isDragSource: boolean;
+  isDropTarget: boolean;
+  onDragStart: (id: string, e: React.MouseEvent) => void;
 }
 
-export function LocationMarker({ location, journeyId }: Props) {
+export function LocationMarker({ location, journeyId, isUnconnected, isDragSource, isDropTarget, onDragStart }: Props) {
   const [showPopup, setShowPopup] = useState(false);
 
   return (
@@ -16,15 +20,32 @@ export function LocationMarker({ location, journeyId }: Props) {
       <Marker
         longitude={location.longitude}
         latitude={location.latitude}
-        anchor="bottom"
+        anchor="center"
         onClick={(e) => {
           e.originalEvent.stopPropagation();
           setShowPopup(true);
         }}
       >
-        <div className="flex flex-col items-center cursor-pointer group">
-          <div className="w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-md group-hover:scale-125 transition-transform" />
-          <div className="mt-1 rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-700 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        {/* Wrapper sized to the dot only — label is absolute so it doesn't shift the anchor */}
+        <div
+          className={`relative group select-none
+            ${isUnconnected && !isDragSource ? 'cursor-grab' : ''}
+            ${isDragSource ? 'cursor-grabbing opacity-50' : ''}
+          `}
+          onMouseDown={isUnconnected ? (e) => {
+            e.stopPropagation();
+            onDragStart(location.id, e);
+          } : undefined}
+        >
+          <div
+            className={`w-3 h-3 rounded-full border-2 border-white shadow-md transition-all duration-100
+              ${isDropTarget
+                ? 'bg-green-500 scale-150 ring-2 ring-green-300 ring-offset-1'
+                : 'bg-blue-600 group-hover:scale-125'
+              }
+            `}
+          />
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-700 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
             {location.name}
           </div>
         </div>
