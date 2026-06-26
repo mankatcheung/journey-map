@@ -42,6 +42,7 @@ export function MapView({ journey }: Props) {
         { padding: 60, duration: 800 },
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-fly when journey changes, not on every update
   }, [journey?.id]);
 
   // Locations that appear in at least one route
@@ -67,13 +68,14 @@ export function MapView({ journey }: Props) {
   useEffect(() => {
     if (!isDragging) return;
 
-    // Capture current journey/connectedIds for this drag session
+    // Capture ref and session data at effect start to avoid stale ref in cleanup
+    const map = mapRef.current;
     const locations = journey?.locations ?? [];
     const connected = connectedIds;
 
     const onMove = (e: MouseEvent) => {
       const d = dragRef.current;
-      if (!d || !containerRef.current || !mapRef.current) return;
+      if (!d || !containerRef.current || !map) return;
       const rect = containerRef.current.getBoundingClientRect();
       const mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
 
@@ -81,7 +83,7 @@ export function MapView({ journey }: Props) {
       let minDist = 28; // snap threshold in px
       for (const loc of locations) {
         if (loc.id === d.fromId || connected.has(loc.id)) continue;
-        const sp = mapRef.current.project([loc.longitude, loc.latitude]);
+        const sp = map.project([loc.longitude, loc.latitude]);
         const dist = Math.hypot(sp.x - mousePos.x, sp.y - mousePos.y);
         if (dist < minDist) { minDist = dist; toId = loc.id; }
       }
@@ -94,7 +96,7 @@ export function MapView({ journey }: Props) {
       if (d?.toId) {
         mutateRef.current({ fromLocationId: d.fromId, toLocationId: d.toId });
       }
-      mapRef.current?.dragPan.enable();
+      map?.dragPan.enable();
       setDrag(null);
     };
 
@@ -103,7 +105,7 @@ export function MapView({ journey }: Props) {
     return () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
-      mapRef.current?.dragPan.enable();
+      map?.dragPan.enable();
     };
   }, [isDragging, journey, connectedIds]);
 

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { journeysService, type CreateJourneyInput, type UpdateJourneyInput } from '~/services/journeys.service';
+import { journeysService, type UpdateJourneyInput } from '~/services/journeys.service';
 
 export const journeyKeys = {
   all: ['journeys'] as const,

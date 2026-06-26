@@ -18,7 +18,7 @@ import {
 const container = createContainer();
 const port = Number(process.env.PORT ?? 3001);
 
-const app = new Elysia()
+new Elysia()
   .use(
     cors({
       origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',

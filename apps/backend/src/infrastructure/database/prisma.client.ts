@@ -7,6 +7,7 @@ export function createPrismaClient(): PrismaClient {
   if (url.startsWith('libsql://') || url.startsWith('wss://')) {
     // Turso production: use libSQL adapter
     // Dynamic import to avoid loading adapter in local dev
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { PrismaLibSQL } = require('@prisma/adapter-libsql');
     const adapter = new PrismaLibSQL({
       url,
