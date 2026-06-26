@@ -8,19 +8,42 @@ import { AddJourneyForm } from '../forms/AddJourneyForm';
 import { AddLocationForm } from '../forms/AddLocationForm';
 import { AddRouteForm } from '../forms/AddRouteForm';
 import { useRouter } from '@tanstack/react-router';
+import type { Journey, Location } from '@journey-map/types';
 
 export function Sidebar() {
   const { user, clearAuth } = useAuthStore();
-  const { selectedJourneyId, setSelectedJourney, setClickMode, clickMode } = useMapStore();
+  const {
+    selectedJourneyId,
+    setSelectedJourney,
+    setClickMode,
+    clickMode,
+    editingLocationId,
+    setEditingLocationId,
+  } = useMapStore();
   const { data: journeys = [], isLoading } = useJourneys();
   const { data: selectedJourney } = useJourney(selectedJourneyId);
   const router = useRouter();
 
-  const [modal, setModal] = useState<'add-journey' | 'add-location' | 'add-route' | null>(null);
+  const [modal, setModal] = useState<'add-journey' | 'add-route' | null>(null);
+  const [editingJourney, setEditingJourney] = useState<Journey | null>(null);
+  const [editingLocation, setEditingLocation] = useState<Location | null>(null);
+
+  // Sync editingLocationId from the store (set by LocationPopup on the map)
+  // and resolve it to a Location object from the selected journey
+  const locationToEdit =
+    editingLocation ??
+    (editingLocationId
+      ? selectedJourney?.locations.find((l) => l.id === editingLocationId) ?? null
+      : null);
 
   const handleLogout = () => {
     clearAuth();
     router.navigate({ to: '/auth' });
+  };
+
+  const closeLocationEdit = () => {
+    setEditingLocation(null);
+    setEditingLocationId(null);
   };
 
   return (
@@ -58,6 +81,7 @@ export function Sidebar() {
             journeys={journeys}
             selectedId={selectedJourneyId}
             onSelect={setSelectedJourney}
+            onEdit={setEditingJourney}
           />
         )}
 
@@ -83,13 +107,20 @@ export function Sidebar() {
                 )}
               </div>
             </div>
-            <LocationList locations={selectedJourney.locations} journeyId={selectedJourney.id} />
+            <LocationList
+              locations={selectedJourney.locations}
+              journeyId={selectedJourney.id}
+              onEdit={setEditingLocation}
+            />
           </div>
         )}
       </div>
 
       {/* Modals */}
       {modal === 'add-journey' && <AddJourneyForm onClose={() => setModal(null)} />}
+      {editingJourney && (
+        <AddJourneyForm journey={editingJourney} onClose={() => setEditingJourney(null)} />
+      )}
       {modal === 'add-route' && selectedJourney && (
         <AddRouteForm
           journeyId={selectedJourney.id}
@@ -97,8 +128,17 @@ export function Sidebar() {
           onClose={() => setModal(null)}
         />
       )}
-      {/* AddLocationForm opens when clickMode coords are set */}
+      {/* Create location: triggered by map click coords */}
       <AddLocationForm journeyId={selectedJourneyId} onClose={() => {}} />
+      {/* Edit location: triggered from LocationList or LocationPopup */}
+      {locationToEdit && selectedJourney && (
+        <AddLocationForm
+          key={locationToEdit.id}
+          journeyId={selectedJourney.id}
+          location={locationToEdit}
+          onClose={closeLocationEdit}
+        />
+      )}
     </aside>
   );
 }

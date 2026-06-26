@@ -6,9 +6,10 @@ interface Props {
   journeys: Journey[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  onEdit: (journey: Journey) => void;
 }
 
-export function JourneyList({ journeys, selectedId, onSelect }: Props) {
+export function JourneyList({ journeys, selectedId, onSelect, onEdit }: Props) {
   const { mutate: deleteJourney } = useDeleteJourney();
   const { setSelectedJourney } = useMapStore();
 
@@ -40,18 +41,28 @@ export function JourneyList({ journeys, selectedId, onSelect }: Props) {
               <p className="mt-0.5 truncate text-xs text-gray-500">{j.description}</p>
             )}
           </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (confirm(`Delete journey "${j.name}"?`)) {
-                if (selectedId === j.id) setSelectedJourney(null);
-                deleteJourney(j.id);
-              }
-            }}
-            className="ml-2 mt-0.5 text-xs text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
-          >
-            ✕
-          </button>
+          <div className="ml-2 mt-0.5 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+            <button
+              onClick={(e) => { e.stopPropagation(); onEdit(j); }}
+              className="text-xs text-gray-400 hover:text-blue-500"
+              title="Edit journey"
+            >
+              ✎
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (confirm(`Delete journey "${j.name}"?`)) {
+                  if (selectedId === j.id) setSelectedJourney(null);
+                  deleteJourney(j.id);
+                }
+              }}
+              className="text-xs text-gray-300 hover:text-red-500"
+              title="Delete journey"
+            >
+              ✕
+            </button>
+          </div>
         </li>
       ))}
     </ul>

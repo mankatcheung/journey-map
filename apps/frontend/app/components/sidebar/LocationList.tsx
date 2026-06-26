@@ -5,9 +5,10 @@ import { useDeleteLocation } from '~/hooks/useLocations';
 interface Props {
   locations: Location[];
   journeyId: string;
+  onEdit: (location: Location) => void;
 }
 
-export function LocationList({ locations, journeyId }: Props) {
+export function LocationList({ locations, journeyId, onEdit }: Props) {
   const { mapRef } = useMapStore();
   const { mutate: deleteLocation } = useDeleteLocation(journeyId);
 
@@ -38,15 +39,25 @@ export function LocationList({ locations, journeyId }: Props) {
               {new Date(loc.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
             </p>
           </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (confirm(`Delete "${loc.name}"?`)) deleteLocation(loc.id);
-            }}
-            className="mt-0.5 text-xs text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
-          >
-            ✕
-          </button>
+          <div className="mt-0.5 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+            <button
+              onClick={(e) => { e.stopPropagation(); onEdit(loc); }}
+              className="text-xs text-gray-400 hover:text-blue-500"
+              title="Edit location"
+            >
+              ✎
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (confirm(`Delete "${loc.name}"?`)) deleteLocation(loc.id);
+              }}
+              className="text-xs text-gray-300 hover:text-red-500"
+              title="Delete location"
+            >
+              ✕
+            </button>
+          </div>
         </li>
       ))}
     </ol>
