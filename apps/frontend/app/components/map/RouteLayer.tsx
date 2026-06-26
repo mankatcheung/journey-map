@@ -36,6 +36,24 @@ export function RouteLayer({ route, locations }: Props) {
         }}
         layout={{ 'line-cap': 'round', 'line-join': 'round' }}
       />
+      <Layer
+        id={`route-arrow-${route.id}`}
+        type="symbol"
+        layout={{
+          'symbol-placement': 'line',
+          'symbol-spacing': 60,
+          'text-field': '▶',
+          'text-size': 12,
+          'text-keep-upright': false,
+          'text-rotation-alignment': 'map',
+        }}
+        paint={{
+          'text-color': '#3b82f6',
+          'text-opacity': 0.9,
+          'text-halo-color': '#ffffff',
+          'text-halo-width': 1,
+        }}
+      />
     </Source>
   );
 }
