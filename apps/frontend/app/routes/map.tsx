@@ -7,6 +7,7 @@ import { Sidebar } from '~/components/sidebar/Sidebar';
 
 export const Route = createFileRoute('/map')({
   beforeLoad: () => {
+    if (typeof window === 'undefined') return; // localStorage unavailable during SSR
     const { token } = useAuthStore.getState();
     if (!token) throw redirect({ to: '/auth' });
   },

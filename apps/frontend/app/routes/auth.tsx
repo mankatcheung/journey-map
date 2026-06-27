@@ -6,6 +6,7 @@ import { useAuthStore } from '~/store/auth.store';
 
 export const Route = createFileRoute('/auth')({
   beforeLoad: () => {
+    if (typeof window === 'undefined') return; // localStorage unavailable during SSR
     const { token } = useAuthStore.getState();
     if (token) throw redirect({ to: '/map' });
   },
