@@ -6,13 +6,12 @@ import type { Location } from '@journey-map/types';
 interface Props {
   location: Location;
   journeyId: string;
-  isUnconnected: boolean;
   isDragSource: boolean;
   isDropTarget: boolean;
   onDragStart: (id: string, e: React.MouseEvent) => void;
 }
 
-export function LocationMarker({ location, journeyId, isUnconnected, isDragSource, isDropTarget, onDragStart }: Props) {
+export function LocationMarker({ location, journeyId, isDragSource, isDropTarget, onDragStart }: Props) {
   const [showPopup, setShowPopup] = useState(false);
 
   return (
@@ -28,14 +27,15 @@ export function LocationMarker({ location, journeyId, isUnconnected, isDragSourc
       >
         {/* Wrapper sized to the dot only — label is absolute so it doesn't shift the anchor */}
         <div
-          className={`relative group select-none
-            ${isUnconnected && !isDragSource ? 'cursor-grab' : ''}
+          className={`relative group select-none pointer-events-auto
+            ${!isDragSource ? 'cursor-grab' : ''}
             ${isDragSource ? 'cursor-grabbing opacity-50' : ''}
           `}
-          onMouseDown={isUnconnected ? (e) => {
+          onMouseDown={(e) => {
+            e.preventDefault();
             e.stopPropagation();
             onDragStart(location.id, e);
-          } : undefined}
+          }}
         >
           <div
             className={`w-3 h-3 rounded-full border-2 border-white shadow-md transition-all duration-100
